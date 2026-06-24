@@ -13,7 +13,7 @@ The product shape is intentionally different from a dashboard or escrow app. Con
 | Network | GenLayer Studionet |
 | Chain ID | `61999` |
 | Contract | `0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59` |
-| Contract Explorer | https://explorer-studio.genlayer.com/address/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59 |
+| Contract Explorer | https://explorer-studio.genlayer.com/contracts/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59 |
 | Deploy TX | `0xbb0fae532cd8410e970abe6a3c97416ab7dbe0e506bd99812b9cf97be68b06b0` |
 | Deployed | `2026-06-23T20:12:44.928Z` |
 

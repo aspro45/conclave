@@ -2,7 +2,7 @@ import { makeReader, write, connectWallet, activeAccount, short, fmtErr }
   from "./shared/genlayer-lite.js";
 
 const CONTRACT = "0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
-const EXPLORER = "https://explorer-studio.genlayer.com/address/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
+const EXPLORER = "https://explorer-studio.genlayer.com/contracts/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
 const { read } = makeReader(CONTRACT);
 const $ = (id) => document.getElementById(id);
 const esc = (s) => (s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -19,7 +19,7 @@ function withTimeout(promise, ms, fallback) {
   ]);
 }
 
-$("contractLink").href = "https://explorer-studio.genlayer.com/address/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
+$("contractLink").href = "https://explorer-studio.genlayer.com/contracts/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
 $("contractLink").textContent = "Contract " + short(CONTRACT);
 $("contractLink").target = "_blank";
 $("contractLink").rel = "noopener";
