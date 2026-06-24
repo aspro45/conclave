@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Conclave - Evidence-Weighted Debate Court</title>
+<meta name="description" content="A GenLayer debate court where motions are judged by evidence, reasoning, challenges, appeals and validator review." />
+<link rel="stylesheet" href="./styles.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" href="#"><span class="mark"><i class="ph-bold ph-gavel"></i></span> Conclave</a>
+    <a class="contract" id="contractLink" href="https://explorer-studio.genlayer.com/address/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59" target="_blank" rel="noopener">Contract</a>
+    <span id="walletSlot"><button class="iconbtn wide" id="connectBtn"><i class="ph-bold ph-wallet"></i> Connect</button></span>
+  </header>
+
+  <main class="workspace">
+    <section class="panel left">
+      <div class="panel-head">
+        <div><span class="eyebrow">Evidence Court</span><h1>Debates judged by reasoning, not volume.</h1></div>
+        <button class="iconbtn" id="refreshBtn" title="Refresh"><i class="ph-bold ph-arrow-clockwise"></i></button>
+      </div>
+      <div class="stats" id="stats"></div>
+      <form class="motion" id="motionForm">
+        <textarea id="motionInput" maxlength="220" placeholder="Open a motion for the Conclave..."></textarea>
+        <button class="primary" type="submit"><i class="ph-bold ph-plus"></i> Open Debate</button>
+      </form>
+      <div class="debates" id="debateList"></div>
+    </section>
+
+    <section class="panel center" id="detail">
+      <div class="empty">Select a debate.</div>
+    </section>
+
+    <aside class="panel right">
+      <div class="panel-head compact"><div><span class="eyebrow">Argument Desk</span><h2>Submit Position</h2></div></div>
+      <form id="argueForm" class="stack">
+        <select id="sideInput">
+          <option value="1">FOR</option>
+          <option value="2">AGAINST</option>
+        </select>
+        <textarea id="argumentInput" maxlength="420" placeholder="Write a tight argument with clear evidence logic."></textarea>
+        <input id="evidenceInput" placeholder="Optional evidence URL" />
+        <button class="primary" type="submit"><i class="ph-bold ph-chat-circle-text"></i> Argue</button>
+      </form>
+      <div class="actions">
+        <button id="judgeBtn"><i class="ph-bold ph-scales"></i> Judge</button>
+        <button id="challengeBtn"><i class="ph-bold ph-warning-octagon"></i> Challenge</button>
+        <button id="appealBtn"><i class="ph-bold ph-arrow-u-up-left"></i> Appeal</button>
+      </div>
+      <div class="notes" id="notes"></div>
+    </aside>
+  </main>
+</div>
+
+<div id="log"></div>
+<script type="module" src="./app.js?v=1"></script>
+</body>
+</html>
