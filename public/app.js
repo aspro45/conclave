@@ -1,8 +1,7 @@
 import { makeReader, write, connectWallet, activeAccount, short, fmtErr }
   from "./shared/genlayer-lite.js";
 
-const CONTRACT = "0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
-const EXPLORER = "https://explorer-studio.genlayer.com/contracts/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
+const CONTRACT = "0xAff6205f7d3403Cf434415C9a5e09D67E8644861";
 const { read } = makeReader(CONTRACT);
 const $ = (id) => document.getElementById(id);
 const esc = (s) => (s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -12,17 +11,7 @@ let debates = [];
 let selected = null;
 let positions = [];
 
-function withTimeout(promise, ms, fallback) {
-  return Promise.race([
-    promise.catch(() => fallback),
-    new Promise((resolve) => setTimeout(() => resolve(fallback), ms)),
-  ]);
-}
-
-$("contractLink").href = "https://explorer-studio.genlayer.com/contracts/0x44ccfCdeb1e9667C8548E051eDcf6D734c3fBA59";
 $("contractLink").textContent = "Contract " + short(CONTRACT);
-$("contractLink").target = "_blank";
-$("contractLink").rel = "noopener";
 
 function toast(msg, kind = "") {
   const el = document.createElement("div");
@@ -35,12 +24,13 @@ function toast(msg, kind = "") {
 async function ensureWallet() {
   if (account) return account;
   await connectWallet();
-  account = activeAccount();
+  account = await activeAccount();
   $("walletSlot").innerHTML = `<span class="pill">${short(account)}</span>`;
   return account;
 }
 
 function parseList(raw) {
+  if (Array.isArray(raw)) return raw;
   try {
     const x = JSON.parse(String(raw));
     return Array.isArray(x) ? x : [];
@@ -49,9 +39,19 @@ function parseList(raw) {
   }
 }
 
+function parseObject(raw) {
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) return raw;
+  try {
+    const value = JSON.parse(String(raw || "{}"));
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  } catch {
+    return {};
+  }
+}
+
 async function load() {
   const statsRaw = await read("get_contract_stats");
-  const stats = JSON.parse(String(statsRaw || "{}"));
+  const stats = parseObject(statsRaw);
   $("stats").innerHTML = [
     ["Debates", stats.debates || 0],
     ["Judgements", stats.judgements || 0],
@@ -95,14 +95,13 @@ async function renderDetail() {
     $("detail").innerHTML = `<div class="empty">Select a debate.</div>`;
     return;
   }
-  const fallback = debates.find((d) => String(d.id) === String(selected));
-  const raw = await withTimeout(read("get_debate_record", [String(selected)]), 2600, "");
-  if (!raw && !fallback) {
+  const raw = await read("get_debate_record", [String(selected)]);
+  if (!raw) {
     $("detail").innerHTML = `<div class="empty">Debate not found.</div>`;
     return;
   }
-  const d = raw ? JSON.parse(String(raw)) : fallback;
-  positions = parseList(await withTimeout(read("get_positions", [String(selected)]), 2600, "[]"));
+  const d = parseObject(raw);
+  positions = parseList(await read("get_positions", [String(selected)]));
   const forArgs = positions.filter((p) => Number(p.side || 1) === 1);
   const againstArgs = positions.filter((p) => Number(p.side || 1) === 2);
   const lane = (title, rows) => `<section class="lane"><h3>${title}</h3>${rows.length ? rows.map((p) => `

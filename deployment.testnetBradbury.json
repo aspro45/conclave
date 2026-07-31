@@ -1,0 +1,15 @@
+{
+  "project": "23-conclave",
+  "name": "Conclave",
+  "network": "testnetBradbury",
+  "chainId": 4221,
+  "rpc": "https://rpc-bradbury.genlayer.com",
+  "explorer": "https://explorer-bradbury.genlayer.com",
+  "contractAddress": "0xAff6205f7d3403Cf434415C9a5e09D67E8644861",
+  "deployTxHash": "0x7b930009ba8277e2cfc5ae3508e44540289ef2b82ae9d4f4bcf9fc2dc6ec14cf",
+  "contractExplorer": "https://explorer-bradbury.genlayer.com/address/0xAff6205f7d3403Cf434415C9a5e09D67E8644861",
+  "deployer": "0xf6d02F13D7BB5fC24aB6A3D662619641958A3Cf6",
+  "deployedAt": "2026-07-01T21:09:25.145Z",
+  "statusName": 5,
+  "smoke": {}
+}

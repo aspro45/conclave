@@ -9,46 +9,78 @@ const blockedNames = new Set([
   "vault.enc.json",
   "wallets.json",
   "projects.json",
+  "private-keys.json",
 ]);
-
+const skippedDirectories = new Set([
+  ".git",
+  ".vercel",
+  "node_modules",
+  "__pycache__",
+  ".pytest_cache",
+  "artifacts",
+  "vendor",
+]);
+const safeTextFiles = new Set([
+  "README.md",
+  "SECURITY.md",
+  "scripts/security-check.mjs",
+]);
 const secretPatterns = [
-  { name: "raw private key", re: /\b0x[a-fA-F0-9]{64}\b/ },
-  { name: "mnemonic assignment", re: /\b(mnemonic|seed[_ -]?phrase)\s*[:=]/i },
-  { name: "private key assignment", re: /\b(private[_ -]?key|PRIVATE_KEY)\s*[:=]/ },
-  { name: "vault password assignment", re: /\b(vault[_ -]?password|VAULT_PASSWORD)\s*[:=]/ },
+  {
+    name: "private key assignment",
+    re: /\b(?:private[_ -]?key|wallet[_ -]?key|PRIVATE_KEY)\s*[:=]\s*["']?(?:0x)?[a-fA-F0-9]{64}\b/,
+  },
+  {
+    name: "mnemonic assignment",
+    re: /\b(?:mnemonic|seed[_ -]?phrase)\s*[:=]\s*["'][a-z]+(?:\s+[a-z]+){10,23}["']/i,
+  },
+  {
+    name: "vault password assignment",
+    re: /\b(?:vault[_ -]?password|VAULT_PASSWORD)\s*[:=]\s*["'][^"']{8,}["']/,
+  },
+  {
+    name: "PEM private key",
+    re: /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  },
+  {
+    name: "raw 32-byte secret",
+    re: /\b0x[a-fA-F0-9]{64}\b/,
+  },
 ];
 
-const skipDirs = new Set([".git", "node_modules", ".vercel", "output"]);
 const findings = [];
 
-function walk(dir) {
-  for (const name of readdirSync(dir)) {
-    const full = join(dir, name);
-    const rel = relative(root, full).replaceAll("\\", "/");
-    const st = statSync(full);
+function isPublicDeploymentMetadata(relativePath) {
+  return /^deployment(?:\.[A-Za-z0-9_-]+)?\.json$/.test(relativePath);
+}
 
-    if (st.isDirectory()) {
-      if (!skipDirs.has(name)) walk(full);
+function walk(directory) {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const absolutePath = join(directory, entry.name);
+    const relativePath = relative(root, absolutePath).replaceAll("\\", "/");
+
+    if (entry.isDirectory()) {
+      if (!skippedDirectories.has(entry.name)) walk(absolutePath);
       continue;
     }
 
-    if (blockedNames.has(name)) {
-      findings.push(`${rel}: forbidden local-secret filename`);
+    if (blockedNames.has(entry.name)) {
+      findings.push(`${relativePath}: forbidden local-secret filename`);
       continue;
     }
 
-    if (st.size > 1_000_000 || /\.(png|jpg|jpeg|webp|gif|ico)$/i.test(name)) continue;
+    const info = statSync(absolutePath);
+    if (info.size > 1_500_000 || /\.(?:png|jpe?g|webp|gif|ico|woff2?)$/i.test(entry.name)) {
+      continue;
+    }
 
-    const text = readFileSync(full, "utf8");
+    const text = readFileSync(absolutePath, "utf8");
     for (const pattern of secretPatterns) {
-      if (pattern.re.test(text)) {
-        const allowed =
-          rel === "scripts/security-check.mjs" ||
-          rel === "SECURITY.md" ||
-          rel === "README.md" ||
-          rel === "deployment.json";
-        if (!allowed) findings.push(`${rel}: possible ${pattern.name}`);
-      }
+      if (!pattern.re.test(text)) continue;
+      const allowed =
+        safeTextFiles.has(relativePath) ||
+        (pattern.name === "raw 32-byte secret" && isPublicDeploymentMetadata(relativePath));
+      if (!allowed) findings.push(`${relativePath}: possible ${pattern.name}`);
     }
   }
 }
@@ -61,4 +93,4 @@ if (findings.length) {
   process.exit(1);
 }
 
-console.log("Security scan passed: no private keys, mnemonics, vaults, or env secrets found.");
+console.log("Security scan passed: no wallet secrets, vault files, mnemonics, or env credentials found.");

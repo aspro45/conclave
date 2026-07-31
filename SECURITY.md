@@ -1,27 +1,13 @@
 # Security
 
-Conclave is a static frontend connected to a public GenLayer Studionet contract. It does not require repository secrets for local or production use.
+This repository is a public frontend and contract proof package for a GenLayer Bradbury project.
 
-Do not commit:
+## Secrets
 
-- private keys
-- wallet exports
-- seed phrases or mnemonics
-- vault files
-- `.env` or `.env.local`
-- dashboard data files from the parent workspace
+Do not commit wallet private keys, vault files, faucet credentials, Vercel tokens, `.env` files, or local dashboard state.
 
-The repository intentionally contains only public deployment metadata:
+The deployment wallet, if any, lives only in the private local workspace. Public repositories should contain public addresses, contract code, tests, deployment metadata, and UI code only.
 
-- contract address
-- explorer URL
-- transaction hashes
-- public deployed contract source
+## Reporting
 
-No backend route stores wallet data. No Vercel secret is required.
-
-Before pushing, run:
-
-```powershell
-npm run security:scan
-```
+Open a GitHub issue for non-sensitive bugs. For sensitive findings, contact the repository owner privately before publishing details.
