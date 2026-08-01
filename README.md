@@ -8,7 +8,7 @@ Conclave treats a debate like a structured case. Each side can add positions and
 
 | Surface | URL |
 | --- | --- |
-| App | https://conclave-github.vercel.app |
+| App | https://tanawo3-conclave.vercel.app |
 | GitHub | https://github.com/aspro45/conclave |
 | Contract | https://explorer-bradbury.genlayer.com/address/0xAff6205f7d3403Cf434415C9a5e09D67E8644861 |
 
